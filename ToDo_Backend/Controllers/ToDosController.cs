@@ -12,7 +12,7 @@ namespace ToDo_Backend.Controllers
     [Route("api/[controller]")]
     public class ToDosController : ControllerBase
     {
-        private ToDoDAL_MySQL _dal = new ToDoDAL_MySQL();
+        private dynamic _dal = new ToDoDAL_MySQL();
         // GET: api/todos
         // GET: api/todos?deadlineWithinDays=:deadlineWithinDays
         [HttpGet]
