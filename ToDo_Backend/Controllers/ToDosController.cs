@@ -23,7 +23,7 @@ namespace ToDo_Backend.Controllers
         // GET: api/todos?deadlineWithinDays=:deadlineWithinDays
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<ToDo>> GetToDos([FromQuery] int? deadlineWithinDays)
+        public ActionResult<IEnumerable<ToDoDTO>> GetToDos([FromQuery] int? deadlineWithinDays)
         {
             if (deadlineWithinDays != null)
                 return Ok(_repository.GetToDosWithDeadlineWithin(deadlineWithinDays.Value));
@@ -45,7 +45,7 @@ namespace ToDo_Backend.Controllers
         [HttpGet("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ToDo> GetToDo([FromRoute] int id)
+        public ActionResult<ToDoDTO> GetToDo([FromRoute] int id)
         {
             ToDo todo = _repository.GetToDo(id);
 
@@ -58,7 +58,7 @@ namespace ToDo_Backend.Controllers
         [HttpPost("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<ToDo> AddToDo([FromBody] ToDo newTodo)
+        public ActionResult<ToDoDTO> AddToDo([FromBody] ToDoDTO newTodo)
         {
             if (newTodo == null || newTodo.ID != 0)
                 return BadRequest();
@@ -72,15 +72,26 @@ namespace ToDo_Backend.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ToDo> UpdateToDo([FromRoute] int id, [FromBody] ToDo updatedToDo)
+        public ActionResult<ToDoDTO> UpdateToDo([FromRoute] int id, [FromBody] ToDoDTO updatedToDo)
         {
-            if (updatedToDo == null || id != updatedToDo.ID)
-                return BadRequest();
+            ToDo todoDB = _repository.GetToDo(id);
 
-            if (_repository.GetToDo(id) == null)
+            if (todoDB == null)
                 return NotFound();
 
-            _repository.UpdateToDo(updatedToDo);
+            if (updatedToDo == null || id != updatedToDo.ID || updatedToDo.VerfasserID != todoDB.VerfasserID)
+                return BadRequest();
+
+            _repository.UpdateToDo(new ToDo()
+            {
+                ID = updatedToDo.ID,
+                Titel = updatedToDo.Titel,
+                Beschreibung = updatedToDo.Beschreibung,
+                Deadline = updatedToDo.Deadline,
+                Erledigt = updatedToDo.Erledigt,
+                VerfasserID = updatedToDo.VerfasserID
+            });
+
             return Ok(updatedToDo);
         }
 
