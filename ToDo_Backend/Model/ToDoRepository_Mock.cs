@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ToDo_Backend.Model
 {
-    public class ToDoDAL_Mock
+    public class ToDoRepository_Mock : IToDoRepository
     {
         private List<ToDo> _aufgaben = new List<ToDo>()
         {
@@ -59,6 +59,7 @@ namespace ToDo_Backend.Model
                 oldToDo.Titel = updatedToDo.Titel;
                 oldToDo.Deadline = updatedToDo.Deadline;
                 oldToDo.Erledigt = updatedToDo.Erledigt;
+                oldToDo.VerfasserID = updatedToDo.VerfasserID;
             }
         }
 

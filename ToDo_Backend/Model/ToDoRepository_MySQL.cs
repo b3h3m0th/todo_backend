@@ -4,9 +4,14 @@ using System.Linq;
 
 namespace ToDo_Backend.Model
 {
-    public class ToDoDAL_MySQL
+    public class ToDoRepository_MySQL : IToDoRepository
     {
-        private static readonly ToDosContext _context = new ToDosContext();
+        private readonly ToDosContext _context;
+
+        public ToDoRepository_MySQL(ToDosContext context)
+        {
+            _context = context;
+        }
 
         public IEnumerable<ToDo> GetToDos()
         {
@@ -38,6 +43,7 @@ namespace ToDo_Backend.Model
                 oldToDo.Titel = updatedToDo.Titel;
                 oldToDo.Deadline = updatedToDo.Deadline;
                 oldToDo.Erledigt = updatedToDo.Erledigt;
+                oldToDo.VerfasserID = updatedToDo.VerfasserID;
                 _context.SaveChanges();
             }
         }

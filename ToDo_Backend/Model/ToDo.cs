@@ -21,5 +21,9 @@ namespace ToDo_Backend.Model
 
         [Required]
         public bool Erledigt { get; set; }
+
+        [Required]
+        public int VerfasserID { get; set; }
+        public virtual Person Verfasser { get; set; }
     }
 }

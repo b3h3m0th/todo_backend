@@ -12,7 +12,13 @@ namespace ToDo_Backend.Controllers
     [Route("api/[controller]")]
     public class ToDosController : ControllerBase
     {
-        private dynamic _dal = new ToDoDAL_MySQL();
+        private IToDoRepository _repository;
+
+        public ToDosController(IToDoRepository todoRepository)
+        {
+            _repository = todoRepository;
+        }
+
         // GET: api/todos
         // GET: api/todos?deadlineWithinDays=:deadlineWithinDays
         [HttpGet]
@@ -20,9 +26,9 @@ namespace ToDo_Backend.Controllers
         public ActionResult<IEnumerable<ToDo>> GetToDos([FromQuery] int? deadlineWithinDays)
         {
             if (deadlineWithinDays != null)
-                return Ok(_dal.GetToDosWithDeadlineWithin(deadlineWithinDays.Value));
+                return Ok(_repository.GetToDosWithDeadlineWithin(deadlineWithinDays.Value));
 
-            return Ok(_dal.GetToDos());
+            return Ok(_repository.GetToDos());
         }
 
         // ACHTUNG: Action-Methoden müssen sich inder URL und/oder der HTTP-Methode unterscheiden, Querystring allein reicht nicht!
@@ -41,7 +47,7 @@ namespace ToDo_Backend.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<ToDo> GetToDo([FromRoute] int id)
         {
-            ToDo todo = _dal.GetToDo(id);
+            ToDo todo = _repository.GetToDo(id);
 
             if (todo == null) return NotFound();
 
@@ -57,7 +63,7 @@ namespace ToDo_Backend.Controllers
             if (newTodo == null || newTodo.ID != 0)
                 return BadRequest();
 
-            _dal.AddToDo(newTodo);
+            _repository.AddToDo(newTodo);
             return CreatedAtAction(nameof(GetToDo), new { id = newTodo.ID }, newTodo);
         }
 
@@ -71,10 +77,10 @@ namespace ToDo_Backend.Controllers
             if (updatedToDo == null || id != updatedToDo.ID)
                 return BadRequest();
 
-            if (_dal.GetToDo(id) == null)
+            if (_repository.GetToDo(id) == null)
                 return NotFound();
 
-            _dal.UpdateToDo(updatedToDo);
+            _repository.UpdateToDo(updatedToDo);
             return Ok(updatedToDo);
         }
 
@@ -84,10 +90,10 @@ namespace ToDo_Backend.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult DeleteToDo([FromRoute] int id)
         {
-            if (_dal.GetToDo(id) == null)
+            if (_repository.GetToDo(id) == null)
                 return NotFound();
 
-            _dal.DeleteToDo(id);
+            _repository.DeleteToDo(id);
             return NoContent();
         }
     }
