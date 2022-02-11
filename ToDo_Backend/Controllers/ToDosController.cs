@@ -63,7 +63,16 @@ namespace ToDo_Backend.Controllers
             if (newTodo == null || newTodo.ID != 0)
                 return BadRequest();
 
-            _repository.AddToDo(newTodo);
+            _repository.AddToDo(new ToDo()
+            {
+                ID = newTodo.ID,
+                Titel = newTodo.Titel,
+                Beschreibung = newTodo.Beschreibung,
+                Deadline = newTodo.Deadline,
+                Erledigt = newTodo.Erledigt,
+                VerfasserID = newTodo.VerfasserID
+            });
+
             return CreatedAtAction(nameof(GetToDo), new { id = newTodo.ID }, newTodo);
         }
 
@@ -89,7 +98,7 @@ namespace ToDo_Backend.Controllers
                 Beschreibung = updatedToDo.Beschreibung,
                 Deadline = updatedToDo.Deadline,
                 Erledigt = updatedToDo.Erledigt,
-                VerfasserID = updatedToDo.VerfasserID
+                VerfasserID = todoDB.VerfasserID
             });
 
             return Ok(updatedToDo);
